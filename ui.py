@@ -80,25 +80,33 @@ async def window(page: ft.Page):
             padding=10,
             expand=True
         ),
+        ft.Row(
+            alignment=ft.MainAxisAlignment.SPACE_BETWEEN,  # ← добавь это
+            controls=[
+                ft.ElevatedButton(
+                    "Export Report",
+                    icon=ft.Icons.FILE_DOWNLOAD,
+                    expand=True,
+                    style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=10)),
+                    on_click=lambda _: print(create_report(report_data))
+                ),
+                ft.ElevatedButton(
+                    "Generate Report",
+                    expand=True,
+                ),
 
-        ft.ElevatedButton(
-            "Generate Report",
-            icon=ft.Icons.FILE_DOWNLOAD,
-            width=page.window_width,
-            style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=10)),
-            on_click=lambda _: print(create_report(report_data))
-        ),
-        ft.ElevatedButton(
-            "Clear",
-            icon=ft.Icons.DELETE_OUTLINE,
-            on_click=on_clear_click,
-            style=ft.ButtonStyle(
-                color= ft.Colors.RED_400,
-                shape=ft.RoundedRectangleBorder(radius=10),
-            ),
+                ft.ElevatedButton(
+                    "Clear",
+                    icon=ft.Icons.DELETE_OUTLINE,
+                    on_click=on_clear_click,
+                    expand=True,
+                    style=ft.ButtonStyle(
+                        color=ft.Colors.RED_400,
+                        shape=ft.RoundedRectangleBorder(radius=10)
+                    )
+                ),
+            ]
         )
-
-
     )
 
 
