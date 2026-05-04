@@ -23,19 +23,15 @@ def create_report(data: dict, file_path: str) -> str:
     for row in ws.iter_rows():
         for i, cell in enumerate(row):
 
-            # Пропускаем первую колонку (имя проекта)
             if i == 0:
                 continue
 
-            # Если в ячейке есть любой текст
             if cell.value:
                 url = str(cell.value).strip()
 
-                # Если юзер забыл написать http/https, добавляем сами
                 if not url.startswith("http"):
                     url = "https://" + url
 
-                # Прячем ссылку за порядковой цифрой
                 cell.value = str(i)
                 cell.hyperlink = url
                 cell.font = Font(color="0000FF", underline="single")
@@ -54,7 +50,6 @@ if __name__ == "__main__":
     for link in links:
         add_link_to_data(group_name, link, data)
 
-    # Генерируем тестовое имя файла с сегодняшней датой
     test_file_name = "report_" + date.today().strftime("%d-%m-%Y") + ".xlsx"
     create_report(data, test_file_name)
     print(f"Тестовый файл {test_file_name} успешно создан!")
