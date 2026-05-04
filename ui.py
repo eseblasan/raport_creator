@@ -1,5 +1,9 @@
 import flet as ft
+import tkinter as tk
+from tkinter import filedialog
+from datetime import date  # Добавили импорт даты
 from create_report import add_link_to_data, create_report
+
 
 async def window(page: ft.Page):
     page.title = "Ivan report Creator"
@@ -10,33 +14,22 @@ async def window(page: ft.Page):
 
     added_links_view = ft.Column(spacing=10, scroll=ft.ScrollMode.ALWAYS, expand=True)
 
-
     project_name = ft.TextField(
         label="Project Name",
         border_color=ft.Colors.BLUE_400,
         prefix_icon=ft.Icons.WORK_OUTLINE
     )
 
-
     link_input = ft.TextField(
         label="Commit Link",
         hint_text="Paste your link here...",
         expand=True
     )
+
     def on_clear_click(e):
         added_links_view.controls.clear()
         report_data.clear()
         page.update()
-
-    ft.ElevatedButton(
-        "Clear",
-        icon= ft.Icons.DELETE_OUTLINE,
-        on_click=on_clear_click,
-        style=ft.ButtonStyle(
-            color=ft.Colors.RED_400,
-            shape=ft.RoundedRectangleBorder(radius=10),
-        ),
-    )
 
     async def on_add_click(e):
         if link_input.value and project_name.value:
@@ -52,14 +45,46 @@ async def window(page: ft.Page):
 
             added_links_view.controls.append(new_commit)
 
-
             link_input.value = ""
             await link_input.focus()
             page.update()
 
     link_input.on_submit = on_add_click
 
+    def on_export_click(e):
+        current_date = date.today().strftime("%d-%m-%Y")
+        dynamic_name = f"report_{current_date}.xlsx"
 
+        root = tk.Tk()
+        root.withdraw()
+        root.attributes('-topmost', True)
+
+
+        file_path = filedialog.asksaveasfilename(
+            title="Куда сохранить отчет?",
+            initialfile=dynamic_name,
+            defaultextension=".xlsx",
+            filetypes=[("Excel files", "*.xlsx")]
+        )
+
+        root.destroy()
+
+        if file_path:
+            try:
+                create_report(report_data, file_path)
+                page.snack_bar = ft.SnackBar(
+                    content=ft.Text(f"Отчет сохранен!\n{file_path}"),
+                    bgcolor=ft.Colors.GREEN_700
+                )
+                page.snack_bar.open = True
+            except Exception as ex:
+                page.snack_bar = ft.SnackBar(
+                    content=ft.Text(f"Ошибка при сохранении: {ex}"),
+                    bgcolor=ft.Colors.RED_700
+                )
+                page.snack_bar.open = True
+
+            page.update()
 
     page.add(
         ft.Text("Monthly Report Generator", size=25, weight=ft.FontWeight.BOLD),
@@ -80,21 +105,22 @@ async def window(page: ft.Page):
             padding=10,
             expand=True
         ),
+
         ft.Row(
-            alignment=ft.MainAxisAlignment.SPACE_BETWEEN,  # ← добавь это
+            alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
             controls=[
                 ft.ElevatedButton(
                     "Export Report",
                     icon=ft.Icons.FILE_DOWNLOAD,
                     expand=True,
                     style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=10)),
-                    on_click=lambda _: print(create_report(report_data))
+                    on_click=on_export_click
                 ),
                 ft.ElevatedButton(
                     "Generate Report",
                     expand=True,
-                ),
 
+                ),
                 ft.ElevatedButton(
                     "Clear",
                     icon=ft.Icons.DELETE_OUTLINE,
@@ -108,9 +134,3 @@ async def window(page: ft.Page):
             ]
         )
     )
-
-
-
-
-
-
