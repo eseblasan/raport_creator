@@ -1,7 +1,7 @@
 import flet as ft
 import tkinter as tk
 from tkinter import filedialog
-from datetime import date  # Добавили импорт даты
+from datetime import date
 from create_report import add_link_to_data, create_report
 
 
@@ -61,7 +61,7 @@ async def window(page: ft.Page):
 
 
         file_path = filedialog.asksaveasfilename(
-            title="Куда сохранить отчет?",
+            title="Where save raport?",
             initialfile=dynamic_name,
             defaultextension=".xlsx",
             filetypes=[("Excel files", "*.xlsx")]
