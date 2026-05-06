@@ -1,8 +1,9 @@
 import flet as ft
 import tkinter as tk
-import validators
+from validators import url as url_validator
 from tkinter import filedialog
 from datetime import date
+from utils.url_extractor import is_url
 from create_report import add_link_to_data, create_report
 
 
@@ -48,7 +49,7 @@ async def window(page: ft.Page):
             for proj in sorted_projects:
                 for item in report_data[proj]:
 
-                    icon_type = ft.Icons.COMMIT if str(item).startswith("http") else ft.Icons.NOTES
+                    icon_type = ft.Icons.COMMIT if is_url(str(item)) else ft.Icons.NOTES
 
                     new_commit = ft.ListTile(
                         leading=ft.Icon(icon_type),
@@ -86,13 +87,13 @@ async def window(page: ft.Page):
             try:
                 create_report(report_data, file_path)
                 page.snack_bar = ft.SnackBar(
-                    content=ft.Text(f"Отчет сохранен!\n{file_path}"),
+                    content=ft.Text(f"Report saved!\n{file_path}"),
                     bgcolor=ft.Colors.GREEN_700
                 )
                 page.snack_bar.open = True
             except Exception as ex:
                 page.snack_bar = ft.SnackBar(
-                    content=ft.Text(f"Ошибка при сохранении: {ex}"),
+                    content=ft.Text(f"Save error: {ex}"),
                     bgcolor=ft.Colors.RED_700
                 )
                 page.snack_bar.open = True
