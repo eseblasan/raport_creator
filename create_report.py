@@ -1,4 +1,5 @@
 import pandas as pd
+import validators
 from datetime import date
 from openpyxl import load_workbook
 from openpyxl.styles import Font, Alignment
@@ -21,26 +22,22 @@ def create_report(data: dict, file_path: str) -> str:
     wb = load_workbook(file_path)
     ws = wb.active
 
-
     center_alignment = Alignment(horizontal="center", vertical="center")
 
     for row in ws.iter_rows():
         for i, cell in enumerate(row):
-
-
             cell.alignment = center_alignment
 
             if i == 0:
                 continue
 
             if cell.value:
-                url = str(cell.value).strip()
-                if not url.startswith("http"):
-                    url = "https://" + url
+                val_str = str(cell.value).strip()
 
-                cell.value = str(i)
-                cell.hyperlink = url
-                cell.font = Font(color="0000FF", underline="single")
+                if val_str.startswith("http"):
+                    cell.value = str(i)
+                    cell.hyperlink = val_str
+                    cell.font = Font(color="0000FF", underline="single")
 
     for col in ws.columns:
         max_length = 0
