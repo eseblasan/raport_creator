@@ -1,5 +1,6 @@
 import flet as ft
 import tkinter as tk
+import validators
 from tkinter import filedialog
 from datetime import date
 from create_report import add_link_to_data, create_report
@@ -35,22 +36,27 @@ async def window(page: ft.Page):
 
     async def on_add_click(e):
         if link_input.value and project_name.value:
+
             if project_name.value not in report_data:
                 report_data[project_name.value] = []
 
             add_link_to_data(project_name.value, link_input.value, report_data)
 
-            added_links_view.controls.clear()
-
+            new_ui_controls = []
             sorted_projects = sorted(report_data.keys())
 
             for proj in sorted_projects:
-                for link in report_data[proj]:
+                for item in report_data[proj]:
+
+                    icon_type = ft.Icons.COMMIT if str(item).startswith("http") else ft.Icons.NOTES
+
                     new_commit = ft.ListTile(
-                        leading=ft.Icon(ft.Icons.COMMIT),
-                        title=ft.Text(f"{proj} | {link}"),
+                        leading=ft.Icon(icon_type),
+                        title=ft.Text(f"{proj} | {item}"),
                     )
-                    added_links_view.controls.append(new_commit)
+                    new_ui_controls.append(new_commit)
+
+            added_links_view.controls = new_ui_controls
 
             link_input.value = ""
             await link_input.focus()
