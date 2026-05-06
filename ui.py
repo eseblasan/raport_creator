@@ -29,6 +29,8 @@ async def window(page: ft.Page):
     def on_clear_click(e):
         added_links_view.controls.clear()
         report_data.clear()
+        project_name.value = ""
+        link_input.value = ""
         page.update()
 
     async def on_add_click(e):
@@ -40,7 +42,7 @@ async def window(page: ft.Page):
 
             new_commit = ft.ListTile(
                 leading=ft.Icon(ft.Icons.COMMIT),
-                title=ft.Text(link_input.value),
+                title=ft.Text(f"{project_name.value} | {link_input.value}"),
             )
 
             added_links_view.controls.append(new_commit)
