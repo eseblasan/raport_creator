@@ -21,8 +21,8 @@ async def window(page: ft.Page):
     )
 
     link_input = ft.TextField(
-        label="Commit Link",
-        hint_text="Paste your link here...",
+        label="Commit Link or text",
+        hint_text="Paste your link or text here...",
         expand=True
     )
 
@@ -40,12 +40,17 @@ async def window(page: ft.Page):
 
             add_link_to_data(project_name.value, link_input.value, report_data)
 
-            new_commit = ft.ListTile(
-                leading=ft.Icon(ft.Icons.COMMIT),
-                title=ft.Text(f"{project_name.value} | {link_input.value}"),
-            )
+            added_links_view.controls.clear()
 
-            added_links_view.controls.append(new_commit)
+            sorted_projects = sorted(report_data.keys())
+
+            for proj in sorted_projects:
+                for link in report_data[proj]:
+                    new_commit = ft.ListTile(
+                        leading=ft.Icon(ft.Icons.COMMIT),
+                        title=ft.Text(f"{proj} | {link}"),
+                    )
+                    added_links_view.controls.append(new_commit)
 
             link_input.value = ""
             await link_input.focus()
